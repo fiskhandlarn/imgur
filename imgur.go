@@ -165,7 +165,7 @@ func openUrl(u string) error {
 
 var anonymous = flag.Bool("a", false, "Post as anonymous")
 
-func upload() {
+func Upload() {
 	flag.Usage = func() {
 		fmt.Fprintln(os.Stderr, `Usage of imgur [-a] [file]`)
 		flag.PrintDefaults()
