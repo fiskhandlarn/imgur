@@ -1,4 +1,4 @@
-package main
+package imgur
 
 import (
 	"bufio"
@@ -165,7 +165,7 @@ func openUrl(u string) error {
 
 var anonymous = flag.Bool("a", false, "Post as anonymous")
 
-func main() {
+func upload() {
 	flag.Usage = func() {
 		fmt.Fprintln(os.Stderr, `Usage of imgur [-a] [file]`)
 		flag.PrintDefaults()
