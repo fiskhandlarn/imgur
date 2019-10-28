@@ -8,22 +8,22 @@ Post images to imgur from go.
 package main
 
 import (
-    "github.com/fiskhandlarn/imgur"
+  "github.com/fiskhandlarn/imgur"
 )
 
 func (a *App) UploadImage(w http.ResponseWriter, r *http.Request) {
-	file, _, err := r.FormFile("image")
-	if err != nil {
+  file, _, err := r.FormFile("image")
+  if err != nil {
     fmt.Fprintln(os.Stderr, err.Error())
-		return
-	}
-	defer file.Close()
+    return
+  }
+  defer file.Close()
 
-	data, err := ioutil.ReadAll(file)
-	if err != nil {
+  data, err := ioutil.ReadAll(file)
+  if err != nil {
     fmt.Fprintln(os.Stderr, "image error: " + err.Error())
-		return
-	}
+    return
+  }
 
   // upload anonymously
   imageURL, err := imgur.Upload(data, nil)
