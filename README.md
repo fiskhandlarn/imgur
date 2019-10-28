@@ -31,7 +31,7 @@ func (a *App) UploadImage(w http.ResponseWriter, r *http.Request) {
   // ... or with bearer
   imageURL, err := imgur.Upload(data, nil)
 
-	if err != nil {
+  if err != nil {
     fmt.Fprintln(os.Stderr, "Upload to imgur failed: " + err.Error())
     return
   }
