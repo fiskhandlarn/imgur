@@ -6,6 +6,7 @@ import (
     "encoding/base64"
     "encoding/gob"
     "encoding/json"
+    "errors"
     "fmt"
     "hash/fnv"
     "net/http"
@@ -163,7 +164,7 @@ func openUrl(u string) error {
 }
 
 //func Upload(imageContents multipart.File, anonymous bool) {
-func Upload(imageContents []byte, anonymous bool) string {
+func Upload(imageContents []byte, anonymous bool) (string, error) {
     params := url.Values{"image": {base64.StdEncoding.EncodeToString(imageContents)}}
 
     var res *http.Response
@@ -171,28 +172,28 @@ func Upload(imageContents []byte, anonymous bool) string {
     if anonymous {
         req, err := http.NewRequest("POST", endpoint, bytes.NewReader(imageContents))
         if err != nil {
-            fmt.Fprintln(os.Stderr, "post:", err.Error())
-            return ""
+            //fmt.Fprintln(os.Stderr, "post:", err.Error())
+            return "", errors.New("Post error: " + err.Error())
         }
         req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
         req.Header.Set("Authorization", "Client-ID "+config.ClientID)
 
         res, err = http.DefaultClient.Do(req)
         if err != nil {
-            fmt.Fprintln(os.Stderr, "post:", err.Error())
-            return ""
+            //fmt.Fprintln(os.Stderr, "post:", err.Error())
+            return "", errors.New("Post error: " + err.Error())
         }
     } else {
         client, err := getOAuthClient(config)
         if err != nil {
-            fmt.Fprintln(os.Stderr, "auth:", err.Error())
-            return ""
+            //fmt.Fprintln(os.Stderr, "auth:", err.Error())
+            return "", errors.New("Auth error: " + err.Error())
         }
 
         res, err = client.PostForm(endpoint, params)
         if err != nil {
-            fmt.Fprintln(os.Stderr, "post:", err.Error())
-            return ""
+            //fmt.Fprintln(os.Stderr, "post:", err.Error())
+            return "", errors.New("Post error: " + err.Error())
         }
     }
     if res.StatusCode != 200 {
@@ -200,9 +201,9 @@ func Upload(imageContents []byte, anonymous bool) string {
         err := scan.ScanJSON(res.Body, "data/error", &message)
         if err != nil {
             message = res.Status
-            fmt.Fprintln(os.Stderr, "post:", message)
-            fmt.Fprintln(os.Stderr, res)
-            return ""
+            // fmt.Fprintln(os.Stderr, "post:", message)
+            // fmt.Fprintln(os.Stderr, res)
+            return "", errors.New("Post error: " + err.Error())
         }
     }
     defer res.Body.Close()
@@ -210,8 +211,9 @@ func Upload(imageContents []byte, anonymous bool) string {
     var link string
     err := scan.ScanJSON(res.Body, "data/link", &link)
     if err != nil {
-        fmt.Fprintln(os.Stderr, "post:", err.Error())
+        //fmt.Fprintln(os.Stderr, "post:", err.Error())
+        return "", errors.New("Post error: " + err.Error())
     }
 
-    return link;
+    return link, nil;
 }
