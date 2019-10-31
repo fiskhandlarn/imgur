@@ -3,7 +3,6 @@ package imgur
 import (
     "bytes"
     "errors"
-    "fmt"
     "net/http"
 
     "github.com/mattn/go-scan"
@@ -29,7 +28,6 @@ func Upload(imageContents []byte, bearer *string) (string, error) {
 
     req, err := http.NewRequest("POST", endpoint, bytes.NewReader(imageContents))
     if err != nil {
-        fmt.Println("post1:", err.Error());
         //fmt.Fprintln(os.Stderr, "post:", err.Error())
         return "", errors.New("Post error: " + err.Error())
     }
@@ -43,7 +41,6 @@ func Upload(imageContents []byte, bearer *string) (string, error) {
 
     res, err = http.DefaultClient.Do(req)
     if err != nil {
-        fmt.Println("post2:", err.Error());
         //fmt.Fprintln(os.Stderr, "post:", err.Error())
         return "", errors.New("Post error: " + err.Error())
     }
@@ -53,7 +50,6 @@ func Upload(imageContents []byte, bearer *string) (string, error) {
         err := scan.ScanJSON(res.Body, "data/error", &message)
         if err != nil {
             message = res.Status
-            fmt.Println("post3:", err.Error(), res);
             // fmt.Fprintln(os.Stderr, "post:", message)
             // fmt.Fprintln(os.Stderr, res)
             return "", errors.New("Post error: " + err.Error())
@@ -64,7 +60,6 @@ func Upload(imageContents []byte, bearer *string) (string, error) {
     var link string
     err = scan.ScanJSON(res.Body, "data/link", &link)
     if err != nil {
-        fmt.Println("post4:", err.Error());
         //fmt.Fprintln(os.Stderr, "post:", err.Error())
         return "", errors.New("Post error: " + err.Error())
     }
