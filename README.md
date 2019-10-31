@@ -29,7 +29,8 @@ func (a *App) UploadImage(w http.ResponseWriter, r *http.Request) {
   imageURL, err := imgur.Upload(data, nil)
 
   // ... or with bearer
-  imageURL, err := imgur.Upload(data, nil)
+  var bearer = "SUPERSECRET BEARER"
+  imageURL, err := imgur.Upload(data, &bearer)
 
   if err != nil {
     fmt.Fprintln(os.Stderr, "Upload to imgur failed: " + err.Error())
