@@ -4,6 +4,7 @@ import (
     "bytes"
     "errors"
     "net/http"
+    "strconv"
 
     "github.com/mattn/go-scan"
     "golang.org/x/oauth2"
@@ -22,7 +23,30 @@ var config = &oauth2.Config{
     },
 }
 
-//func Upload(imageContents multipart.File, anonymous bool) {
+func Delete(imageHash string, bearer *string) (error) {
+    var res *http.Response
+
+    req, err := http.NewRequest("DELETE", endpoint + "/" + imageHash, nil)
+    if err != nil {
+        //fmt.Fprintln(os.Stderr, "post:", err.Error())
+        return errors.New("Post error 1: " + err.Error())
+    }
+    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+    req.Header.Set("Authorization", "Bearer " + *bearer)
+
+    res, err = http.DefaultClient.Do(req)
+    if err != nil {
+        //fmt.Fprintln(os.Stderr, "post:", err.Error())
+        return errors.New("Post error 2: " + err.Error())
+    }
+
+    if res.StatusCode != 200 {
+        return errors.New("Post error: status code " + strconv.Itoa(res.StatusCode))
+    }
+
+    return nil
+}
+
 func Upload(imageContents []byte, bearer *string) (string, error) {
     var res *http.Response
 
